@@ -3,20 +3,22 @@
 
 #include <functional>
 
+#include <opencv2/opencv.hpp>
+
 class Worker {
 public:
-    typedef std::function<void()> TaskFunction;
+    typedef std::function<void(const cv::Mat &, cv::Mat &)> TaskFunction;
     
-    Worker(int threads = 0);
+    Worker(cv::VideoCapture & cap, cv::VideoWriter & writer, int threads = 0);
     
-    inline void setPreAction(TaskFunction f) { _preAction = f; }
-    inline void setParallelAction(TaskFunction f) { _parallelAction = f; }
+    inline void setParallelAction(TaskFunction f) { _taskFunction = f; }
     
     void run();
 
 protected:
-    TaskFunction _preAction;
-    TaskFunction _parallelAction;
+    TaskFunction _taskFunction;
+    cv::VideoCapture _capture;
+    cv::VideoWriter & _writer;
     int _numberOfThreads;
 };
 
