@@ -11,7 +11,7 @@ public:
     
     Worker(cv::VideoCapture & cap, cv::VideoWriter & writer, int threads = 0);
     
-    inline void setParallelAction(TaskFunction f) { _taskFunction = f; }
+    inline void setTask(TaskFunction f) { _taskFunction = f; }
     
     void run();
 
