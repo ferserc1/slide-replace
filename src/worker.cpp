@@ -14,23 +14,19 @@ Worker::Worker(cv::VideoCapture & cap, cv::VideoWriter & writer, int threads)
 }
 
 void Worker::run() {
+    bool useLambdas = _taskFunction != nullptr;
+    bool useTask = _taskInstance != nullptr && !useLambdas;
+    
+    if (!useLambdas && !useTask) {
+        throw new std::invalid_argument("No task function specified");
+    }
+    
     if (!_capture.isOpened()) {
         throw new std::ios_base::failure("The video capture is not ready");
     }
     
     if (!_writer.isOpened()) {
         throw new std::ios_base::failure("The video writer is not ready");
-    }
-    
-    if (!_taskFunction) {
-        _taskFunction = [](const cv::Mat & inputFrame, cv::Mat & outputFrame) {
-            for (int j = 0; j<inputFrame.rows; ++j) {
-                for (int i = 0; i<inputFrame.cols; ++i) {
-                    cv::Vec3b pix = inputFrame.at<cv::Vec3b>(j,i);
-                    outputFrame.at<cv::Vec3b>(j,i) = inputFrame.at<cv::Vec3b>(j,i);
-                }
-            }
-        };
     }
     
     std::vector<cv::Mat> frames;
@@ -55,12 +51,25 @@ void Worker::run() {
             }
         }
         
+        if (useLambdas && _setupFunction) {
+            _setupFunction();
+        }
+        else if (useTask) {
+            _taskInstance->setup();
+        }
+        
         for (auto i = 0; i<frames.size(); ++i) {
             workers.push_back(std::thread([&](int index) {
                 // TODO: do something with input frame
                 const auto & frame = frames[index];
                 cv::Mat newFrame = cv::Mat::zeros(frame.rows, frame.cols, CV_8UC3);
-                _taskFunction(frame,newFrame);
+                
+                if (useLambdas) {
+                    _taskFunction(frame,newFrame);
+                }
+                else if (useTask) {
+                    _taskInstance->execute(frame,newFrame);
+                }
                 
                 {
                     std::lock_guard<std::mutex> l(mutex);

@@ -1,19 +1,31 @@
 
 #include <path.hpp>
 
-Path Path::pathAddingComponent(const std::string & component) const {
-    Path result(_pathString);
+path path::pathAddingComponent(const std::string & component) const {
+    path result(_pathString);
     result.addComponent(component);
     return result;
 }
 
-Path Path::pathAddingExtension(const std::string & extension) const {
-    Path result(_pathString);
+path path::pathAddingExtension(const std::string & extension) const {
+    path result(_pathString);
     result.addExtension(extension);
     return result;
 }
 
-std::string Path::fileName() {
+path path::pathRemovingLastComponent() const {
+    path result(_pathString);
+    result.removeLastComponent();
+    return result;
+}
+
+path path::pathRemovingExtension() const {
+    path result(_pathString);
+    result.removeExtension();
+    return result;
+}
+
+std::string path::fileName() {
     std::string result;
     auto index = _pathString.find_last_of('/');
     if (index!=std::string::npos) {
@@ -22,7 +34,7 @@ std::string Path::fileName() {
     return result;
 }
 
-std::string Path::extension() {
+std::string path::extension() {
     std::string result;
     auto index = _pathString.find_last_of('.');
     if (index!=std::string::npos) {
@@ -31,7 +43,7 @@ std::string Path::extension() {
     return result;
 }
 
-Path & Path::addComponent(const std::string & comp) {
+path & path::addComponent(const std::string & comp) {
     std::string fixedComp = comp;
     std::replace(fixedComp.begin(), fixedComp.end(), '\\', '/');
     
@@ -54,7 +66,7 @@ Path & Path::addComponent(const std::string & comp) {
     return *this;
 }
 
-Path & Path::addExtension(const std::string & ext) {
+path & path::addExtension(const std::string & ext) {
     if (_pathString.back()=='/') {
         _pathString = _pathString.substr(0, _pathString.size() - 1);
     }
@@ -67,7 +79,7 @@ Path & Path::addExtension(const std::string & ext) {
     return *this;
 }
 
-Path & Path::removeLastComponent() {
+path & path::removeLastComponent() {
     auto index = _pathString.find_last_of('/');
     if (index!=std::string::npos) {
         _pathString = _pathString.substr(0,index);
@@ -75,7 +87,7 @@ Path & Path::removeLastComponent() {
     return *this;
 }
 
-Path & Path::removeExtension() {
+path & path::removeExtension() {
     auto index = _pathString.find_last_of('.');
     if (index!=std::string::npos) {
         _pathString = _pathString.substr(0, index);

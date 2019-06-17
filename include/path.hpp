@@ -1,29 +1,34 @@
 
-#ifndef _PATH_HPP_
-#define _PATH_HPP_
+#ifndef _path_HPP_
+#define _path_HPP_
 
 #include <string>
 
-class Path {
+class path {
 public:
-    Path() {}
-    Path(const std::string & p) :_pathString(p) { fixSlashes(); }
-    Path(const Path & p) :_pathString(p.toString()) { fixSlashes(); }
+    path() {}
+    path(const std::string & p) :_pathString(p) { fixSlashes(); }
+    path(const char * p) :_pathString(p) { fixSlashes(); }
+    path(const path & p) :_pathString(p.toString()) { fixSlashes(); }
 
     inline const std::string & toString() const { return _pathString; }
 
-    Path pathAddingComponent(const std::string & component) const;
-    Path pathAddingExtension(const std::string & extension) const;
+    path pathAddingComponent(const std::string & component) const;
+    path pathAddingExtension(const std::string & extension) const;
+    path pathRemovingLastComponent() const;
+    path pathRemovingExtension() const;
 
-    Path & addComponent(const std::string & comp);
-    Path & addExtension(const std::string & ext);
-    Path & removeLastComponent();
-    Path & removeExtension();
+    path & addComponent(const std::string & comp);
+    path & addExtension(const std::string & ext);
+    path & removeLastComponent();
+    path & removeExtension();
     
     std::string fileName();
     std::string extension();
     
-    inline void operator=(const Path & p) {
+    inline bool empty() const { return _pathString.empty(); }
+    
+    inline void operator=(const path & p) {
         _pathString = p._pathString;
     }
     

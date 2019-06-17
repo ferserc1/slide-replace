@@ -4,29 +4,55 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <task.hpp>
+#include <path.hpp>
+
 #include <string>
 #include <vector>
 
-class SlideMergerTask {
+class SlideMergerTask : public Task {
 public:
-    void operator()(const cv::Mat &, cv::Mat &);
+    // Setup function
+    void setup();
+    
+    // Main task function
+    void execute(const cv::Mat &, cv::Mat &);
 
-    inline void setInputPath(const std::string & v) { _inputPath = v; }
-    inline void setInputPrefix(const std::string & v) { _inputPrefix = v; }
+    inline bool setCommandLine(int argc, char ** argv) { return setCommandLine(argc, const_cast<const char **>(argv)); }
+    bool setCommandLine(int argc, const char ** argv);
+    
+    inline void setOriginalImagePath(const path & v) { _originalImagePath = v; }
+    inline void setModifiedImagePath(const path & v) { _modifiedImagePath = v; }
+    inline void setImagePrefix(const std::string & v) { _imagePrefix = v; }
     inline void setImageExtension(const std::string & v) { _imageExtension = v; }
     inline void setStartIndex(int startIndex) { _startIndex = startIndex; }
-    inline const std::string & inputPath() const { return _inputPath; }
-    inline const std::string & inputPrefix() const { return _inputPrefix; }
+    inline const path & originalImagePath() const { return _originalImagePath; }
+    inline const path & modifiedImagePath() const { return _modifiedImagePath; }
+    inline const std::string & inputPrefix() const { return _imagePrefix; }
     inline const std::string & imageExtension() const { return _imageExtension; }
     inline int startIndex() const { return _startIndex; }
     
+    void loadResources();
+    
 protected:
-    std::string _inputPath = "";
-    std::string _inputPrefix = "frame_";
+    path _originalImagePath = "";
+    path _modifiedImagePath = "";
+    std::string _imagePrefix = "frame_";
     std::string _imageExtension = "jpg";
     int _startIndex = 0;
     
-    void loadImages(std::vector<cv::Mat> & result);
+    std::vector<cv::Mat> _originalImages;
+    std::vector<cv::Mat> _modifiedImages;
+    
+private:
+    uint32_t _currentImage = 0;
+    std::mutex _imageMutex;
+    cv::Mat * _slideImage = nullptr;
+
+    void loadImages(const path & basePath, const std::string & imgPrefix, const std::string & extension, std::vector<cv::Mat> & result);
+    double imageSimilarity(const cv::Mat & img1, const cv::Mat & img2);
+    size_t closestImageIndex(const cv::Mat & source, std::vector<cv::Mat> & images, size_t lastIndex);
+    void combineTranslatedVideo(const cv::Mat & videoFrame, const cv::Mat & difference, const cv::Mat & translatedImage, float threshold, cv::Mat & imgResult);
 };
 
 #endif
