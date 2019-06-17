@@ -55,12 +55,11 @@ void Worker::run() {
             _setupFunction();
         }
         else if (useTask) {
-            _taskInstance->setup();
+            _taskInstance->setup(frames);
         }
         
         for (auto i = 0; i<frames.size(); ++i) {
             workers.push_back(std::thread([&](int index) {
-                // TODO: do something with input frame
                 const auto & frame = frames[index];
                 cv::Mat newFrame = cv::Mat::zeros(frame.rows, frame.cols, CV_8UC3);
                 

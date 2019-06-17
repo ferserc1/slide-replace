@@ -11,15 +11,25 @@ bool SlideMergerTask::setCommandLine(int argc, const char ** argv) {
     return true;
 }
 
-void SlideMergerTask::setup() {
-    std::cout << "Setup test" << std::endl;
+void SlideMergerTask::setup(const std::vector<cv::Mat> & inputFrames) {
+    //std::cout << "Setup test" << std::endl;
+    _slideImage = &inputFrames[0];
 }
 
 void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame) {
     uint32_t currentImage = closestImageIndex(inputFrame, _originalImages, _currentImage);
     if (currentImage!=_currentImage) {
-        
+        _slideImage = &inputFrame;
     }
+    
+    cv::Mat difference;
+    cv::absdiff(inputFrame, *_slideImage, difference);
+    
+    cv::Mat translatedImage = _modifiedImages[currentImage];
+    outputFrame = cv::Mat::zeros(difference.rows, difference.cols, CV_8UC3);
+    
+    
+    combineTranslatedVideo(inputFrame, difference, translatedImage, _treshold, outputFrame);
     
     {
         std::lock_guard<std::mutex> lock(_imageMutex);
@@ -38,7 +48,7 @@ void SlideMergerTask::loadResources() {
     _originalImages.clear();
     _modifiedImages.clear();
     loadImages(_originalImagePath, _imagePrefix, _imageExtension, _originalImages);
-    loadImages(_modifiedImagePath, _imagePrefix, _imageExtension, _modifiedImages);
+    loadImages(_modifiedImagePath, _modifiedImagePrefix, _imageExtension, _modifiedImages);
 }
 
 void SlideMergerTask::loadImages(const path & basePath, const std::string & imgPrefix, const std::string & extension, std::vector<cv::Mat> & result) {

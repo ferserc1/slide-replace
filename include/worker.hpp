@@ -20,14 +20,14 @@ public:
     inline void setTask(TaskFunction f) { _taskFunction = f; }
     
     // Option 2: using a task instance
-    inline void setTask(Task * task) { _taskInstance = std::unique_ptr<Task>(task); }
+    inline void setTask(Task * task) { _taskInstance = task; }
     
     void run();
 
 protected:
     SetupFunction _setupFunction;
     TaskFunction _taskFunction;
-    std::unique_ptr<Task> _taskInstance;
+    Task * _taskInstance;
     cv::VideoCapture _capture;
     cv::VideoWriter & _writer;
     int _numberOfThreads;
