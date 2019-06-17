@@ -1,14 +1,14 @@
 
 #include <slide-merger-task.hpp>
 
-bool SlideMergerTask::setCommandLine(int argc, const char ** argv) {
+void SlideMergerTask::setCommandLine(int argc, const char ** argv) {
     // TODO: Setup using command line
     path inputImagePath = "/Users/fernando/Downloads/video-data";
     setOriginalImagePath(inputImagePath);
     
     loadResources();
     
-    return true;
+    // TODO: Throw argument exception if error
 }
 
 void SlideMergerTask::setup(const std::vector<cv::Mat> & inputFrames) {
@@ -16,11 +16,13 @@ void SlideMergerTask::setup(const std::vector<cv::Mat> & inputFrames) {
     _slideImage = &inputFrames[0];
 }
 
-void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame) {
+void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame, std::mutex & mutex) {
     uint32_t currentImage = closestImageIndex(inputFrame, _originalImages, _currentImage);
     if (currentImage!=_currentImage) {
         _slideImage = &inputFrame;
     }
+
+    
     
     cv::Mat difference;
     cv::absdiff(inputFrame, *_slideImage, difference);
@@ -32,8 +34,8 @@ void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame)
     combineTranslatedVideo(inputFrame, difference, translatedImage, _treshold, outputFrame);
     
     {
-        std::lock_guard<std::mutex> lock(_imageMutex);
-        _currentImage = currentImage;
+        std::lock_guard<std::mutex> lock(mutex);
+        _currentImage = _currentImage>currentImage ? _currentImage : currentImage;
     }
 }
 

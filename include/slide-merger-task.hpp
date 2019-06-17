@@ -16,10 +16,10 @@ public:
     void setup(const std::vector<cv::Mat> &);
     
     // Main task function
-    void execute(const cv::Mat &, cv::Mat &);
+    void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex);
 
-    inline bool setCommandLine(int argc, char ** argv) { return setCommandLine(argc, const_cast<const char **>(argv)); }
-    bool setCommandLine(int argc, const char ** argv);
+    inline void setCommandLine(int argc, char ** argv) { setCommandLine(argc, const_cast<const char **>(argv)); }
+    void setCommandLine(int argc, const char ** argv);
     
     inline void setOriginalImagePath(const path & v) { _originalImagePath = v; }
     inline void setModifiedImagePath(const path & v) { _modifiedImagePath = v; }
@@ -52,7 +52,6 @@ protected:
     
 private:
     uint32_t _currentImage = 0;
-    std::mutex _imageMutex;
     const cv::Mat * _slideImage = nullptr;
 
     void loadImages(const path & basePath, const std::string & imgPrefix, const std::string & extension, std::vector<cv::Mat> & result);

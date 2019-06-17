@@ -5,27 +5,51 @@
 #include <slide-merger-task.hpp>
 
 int main(int argc, char ** argv) {
-    path testVideo = "/Users/fernando/Downloads/video-data/presentacion.mp4";
-    path outTestVideo = "/Users/fernando/Downloads/video-data/out.mp4";
+    const cv::String keys =
+    "{help h usage ?     |             | print this message          }"
+    "{@input             |             | video to process            }"
+    "{output o           |             | processed video output path }"
+    "{processor p        |slideMerger  | processor to use            }"
+    ;
     
-    cv::VideoCapture cap(testVideo.toString());
+    cv::CommandLineParser parser(argc, argv, keys);
+    
+    std::string inputVideo = parser.get<cv::String>(0);
+    std::string processor = parser.get<cv::String>("processor");
+    
+    if (inputVideo.empty() || processor.empty() || parser.has("help")) {
+        parser.printMessage();
+        return 0;
+    }
+    std::cout << parser.get<cv::String>(0) << std::endl << processor << std::endl;
+    
+    path inputVideoPath = inputVideo;
+    path outVideoPath = "";
+    if (parser.has("output")) {
+        outVideoPath = parser.get<cv::String>("output");
+    }
+    
+    cv::VideoCapture cap(inputVideoPath.toString());
     cv::VideoWriter outputVideo;
     cv::Size size(static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH)), static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
     int ex = static_cast<int>(cap.get(cv::CAP_PROP_FOURCC));
-    outputVideo.open(outTestVideo.toString(), ex, cap.get(cv::CAP_PROP_FPS), size, true);
+    outputVideo.open(outVideoPath.toString(), ex, cap.get(cv::CAP_PROP_FPS), size, true);
 
-    
     Worker w(cap,outputVideo);
     
-    std::unique_ptr<SlideMergerTask> slideMerger(new SlideMergerTask());
+    std::unique_ptr<Task> slideMerger(new SlideMergerTask());
     
-    slideMerger->setCommandLine(argc, argv);
-    
-    w.setTask(slideMerger.get());
-    //w.setSetup(slideMerger);
-    //w.setTask(slideMerger);
-    
-    w.run();
+    try {
+        slideMerger->setCommandLine(argc, const_cast<const char**>(argv));
+        
+        w.setTask(slideMerger.get());
+        
+        w.run();
+    }
+    catch (std::exception & e) {
+        std::cerr << e.what() << std::endl;
+        return -1;
+    }
     
     return 0;
 }

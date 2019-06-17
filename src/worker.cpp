@@ -67,7 +67,7 @@ void Worker::run() {
                     _taskFunction(frame,newFrame);
                 }
                 else if (useTask) {
-                    _taskInstance->execute(frame,newFrame);
+                    _taskInstance->execute(frame,newFrame,mutex);
                 }
                 
                 {
