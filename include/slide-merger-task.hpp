@@ -12,6 +12,7 @@
 
 class SlideMergerTask : public Task {
 public:
+    
     // Setup function
     void setup(const std::vector<cv::Mat> &);
     

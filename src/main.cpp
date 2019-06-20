@@ -17,7 +17,7 @@ int main(int argc, char ** argv) {
     std::string inputVideo = parser.get<cv::String>(0);
     std::string processor = parser.get<cv::String>("processor");
     
-    if (inputVideo.empty() || processor.empty() || parser.has("help")) {
+    if (inputVideo.empty() || (parser.has("help") && !parser.has("processor"))) {
         parser.printMessage();
         return 0;
     }
@@ -37,12 +37,12 @@ int main(int argc, char ** argv) {
 
     Worker w(cap,outputVideo);
     
-    std::unique_ptr<Task> slideMerger(new SlideMergerTask());
-    
     try {
-        slideMerger->setCommandLine(argc, const_cast<const char**>(argv));
+        std::unique_ptr<Task> task(TaskFactory::Instantiate(processor,inputVideoPath.toString(),outVideoPath.toString()));
         
-        w.setTask(slideMerger.get());
+        task->setCommandLine(argc, const_cast<const char**>(argv));
+        
+        w.setTask(task.get());
         
         w.run();
     }

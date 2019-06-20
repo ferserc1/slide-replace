@@ -8,7 +8,10 @@ set(SOURCE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/worker.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/bw-filter-task.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/slide-merger-task.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/slide-replace-task.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/path.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/task.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/tools.cpp"
 )
 set(HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/include"

@@ -1,14 +1,50 @@
 
 #include <slide-merger-task.hpp>
 
+TaskRegistrar<SlideMergerTask> task("slideMerger");
+
 void SlideMergerTask::setCommandLine(int argc, const char ** argv) {
-    // TODO: Setup using command line
-    path inputImagePath = "/Users/fernando/Downloads/video-data";
-    setOriginalImagePath(inputImagePath);
+    const cv::String keys =
+    "{help h                      |                 | show this message }"
+    "{originalImagePath op        |                 | path with the original images        }"
+    "{replacingImagePath rp       |                 | path with the replacing images       }"
+    "{startIndex i                | 0               | value used as starting index         }"
+    "{originalPrefix opre         |frame_           | prefix used in the original images   }"
+    "{replacingPrefix rpre        |frame_alt_       | prefix used in the replacing images  }"
+    "{imageExtension ext          |jpg              | image file type extension            }"
+    ;
+    
+    cv::CommandLineParser parser(argc,argv,keys);
+    
+    if (parser.has("help")) {
+        parser.printMessage();
+        throw std::runtime_error("Execution aborted");
+    }
+    
+    path originalImagePath = videoIn().pathRemovingLastComponent();
+    if (parser.has("originalImagePath")) {
+        originalImagePath = parser.get<cv::String>("originalImagePath");
+    }
+    
+    path replacingImagePath = originalImagePath;
+    if (parser.has("replacingImagePath")) {
+        replacingImagePath = parser.get<cv::String>("replacingImagePath");
+    }
+    
+    setOriginalImagePath(originalImagePath);
+    setModifiedImagePath(replacingImagePath);
+    
+    auto startIndex = parser.get<int>("startIndex");
+    std::string originalPrefix = parser.get<cv::String>("originalPrefix");
+    std::string replacingPrefix = parser.get<cv::String>("replacingPrefix");
+    std::string imageExtension = parser.get<cv::String>("imageExtension");
+    
+    setStartIndex(startIndex);
+    setImagePrefix(originalPrefix);
+    setModifiedImagePrefix(replacingPrefix);
+    setImageExtension(imageExtension);
     
     loadResources();
-    
-    // TODO: Throw argument exception if error
 }
 
 void SlideMergerTask::setup(const std::vector<cv::Mat> & inputFrames) {
