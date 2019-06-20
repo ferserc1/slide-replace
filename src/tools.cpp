@@ -26,7 +26,7 @@ double imageSimilarity(const cv::Mat & img1, const cv::Mat & img2) {
     return value;
 }
 
-void combineTranslatedVideo(const cv::Mat & videoFrame, const cv::Mat & difference, const cv::Mat & replacingImage, float threshold, cv::Mat & imgResult) {
+void combineImages(const cv::Mat & videoFrame, const cv::Mat & difference, const cv::Mat & replacingImage, float threshold, cv::Mat & imgResult) {
     float dist;
     for (int j = 0; j<videoFrame.rows; ++j) {
         for (int i = 0; i<videoFrame.cols; ++i) {

@@ -1,5 +1,6 @@
 
 #include <slide-merger-task.hpp>
+#include <tools.hpp>
 
 TaskRegistrar<SlideMergerTask> task("slideMerger");
 
@@ -67,7 +68,7 @@ void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame,
     outputFrame = cv::Mat::zeros(difference.rows, difference.cols, CV_8UC3);
     
     
-    combineTranslatedVideo(inputFrame, difference, translatedImage, _treshold, outputFrame);
+    tools::combineImages(inputFrame, difference, translatedImage, _treshold, outputFrame);
     
     {
         std::lock_guard<std::mutex> lock(mutex);
@@ -104,29 +105,6 @@ void SlideMergerTask::loadImages(const path & basePath, const std::string & imgP
     }
 }
 
-double SlideMergerTask::imageSimilarity(const cv::Mat & img1, const cv::Mat & img2) {
-    cv::Mat diff;
-    absdiff(img1, img2, diff);
-    bitwise_not(diff, diff);
-    std::vector<cv::Mat> planes;
-    split(diff, planes);
-    
-    int histSize = 256;
-    float range[] = { 0.0f, 256.0f };
-    const float * histRange = { range };
-    cv::Mat bHist, gHist, rHist;
-    cv::calcHist(&planes[0], 1, 0, cv::Mat(), bHist, 1, &histSize, &histRange, true, false);
-    cv::calcHist(&planes[1], 1, 0, cv::Mat(), gHist, 1, &histSize, &histRange, true, false);
-    cv::calcHist(&planes[2], 1, 0, cv::Mat(), rHist, 1, &histSize, &histRange, true, false);
-    
-    float value = 0.0f;
-    for (int i = 0; i<histSize/3; ++i) {
-        auto histColor = (bHist.at<float>(i) + gHist.at<float>(i) + bHist.at<float>(i)) / 3.0f;
-        value += histColor;
-    }
-    return value;
-}
-
 size_t SlideMergerTask::closestImageIndex(const cv::Mat & source, std::vector<cv::Mat> & images, size_t lastIndex) {
     auto indexL = lastIndex - 1;
     auto indexC = lastIndex;
@@ -139,13 +117,13 @@ size_t SlideMergerTask::closestImageIndex(const cv::Mat & source, std::vector<cv
     double similarityC = similarityC;
     
     if (imL) {
-        similarityL = imageSimilarity(source, *imL);
+        similarityL = tools::imageSimilarity(source, *imL);
     }
     if (imC) {
-        similarityC = imageSimilarity(source, *imC);
+        similarityC = tools::imageSimilarity(source, *imC);
     }
     if (imR) {
-        similarityR = imageSimilarity(source, *imR);
+        similarityR = tools::imageSimilarity(source, *imR);
     }
     
     if (similarityL<=similarityC && similarityC<=similarityR) {
@@ -156,23 +134,6 @@ size_t SlideMergerTask::closestImageIndex(const cv::Mat & source, std::vector<cv
     }
     else {
         return indexR;
-    }
-}
-
-void SlideMergerTask::combineTranslatedVideo(const cv::Mat & videoFrame, const cv::Mat & difference, const cv::Mat & translatedImage, float threshold, cv::Mat & imgResult) {
-    float dist;
-    for (int j = 0; j<videoFrame.rows; ++j) {
-        for (int i = 0; i<videoFrame.cols; ++i) {
-            cv::Vec3b pix = difference.at<cv::Vec3b>(j,i);
-            
-            dist = sqrtf(pix[0] * pix[0] + pix[2] * pix[1] + pix[2] * pix[2]);
-            if (dist>threshold) {
-                imgResult.at<cv::Vec3b>(j,i) = videoFrame.at<cv::Vec3b>(j,i);
-            }
-            else {
-                imgResult.at<cv::Vec3b>(j,i) = translatedImage.at<cv::Vec3b>(j,i);
-            }
-        }
     }
 }
 

@@ -13,10 +13,6 @@
 
 class SlideReplaceTask : public Task {
 public:
-    // Setup function
-    void setup(const std::vector<cv::Mat> &);
-    
-    // Main task function
     void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex);
     
     inline void setCommandLine(int argc, char ** argv) { setCommandLine(argc, const_cast<const char **>(argv)); }
@@ -25,7 +21,7 @@ public:
 private:
     cv::Mat _searchImage;
     cv::Mat _replacingImage;
-    float _tresshold;
+    float _treshold;
 };
 
 #endif

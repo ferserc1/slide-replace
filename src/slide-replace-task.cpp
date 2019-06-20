@@ -1,5 +1,6 @@
 
 #include <slide-replace-task.hpp>
+#include <tools.hpp>
 
 TaskRegistrar<SlideReplaceTask> slideReplaceFactory("slideReplace");
 
@@ -8,6 +9,7 @@ void SlideReplaceTask::setCommandLine(int argc, const char **argv) {
     "{help h                   |                      | show this message                                   }"
     "{searchImage s            |                      | image that will be searched in the video to replace }"
     "{replacingImage r         |                      | mage that will be replaced in the video             }"
+    "{treshold t               |                      | mage that will be replaced in the video             }"
     ;
     
     cv::CommandLineParser parser(argc,argv,keys);
@@ -17,7 +19,7 @@ void SlideReplaceTask::setCommandLine(int argc, const char **argv) {
         throw std::invalid_argument("searchImage parameter is required");
     }
     
-    if (!parser.has("")) {
+    if (!parser.has("replacingImage")) {
         parser.printMessage();
         throw std::invalid_argument("replacingImage parameter is required");
     }
@@ -35,17 +37,22 @@ void SlideReplaceTask::setCommandLine(int argc, const char **argv) {
         throw std::ios_base::failure("No such image with name " + replacingImagePath);
     }
     
-    _tresshold = 10.0f; // TODO: find a good thressold
-}
-
-void SlideReplaceTask::setup(const std::vector<cv::Mat> &) {
-    
+    _treshold = 200.0f;
+    if (parser.has("treshold")) {
+        _treshold = parser.get<int>("treshold");
+    }
 }
 
 void SlideReplaceTask::execute(const cv::Mat & srcImage, cv::Mat & dstImage, std::mutex &mutex) {
-    // Compare input image
+    auto similarity = tools::imageSimilarity(srcImage, _searchImage);
     
-    // if thresshold<_thresshold
-    //    extract difference
-    //    combine replacing image with the difference into dstImage
+    if (similarity<=_treshold) {
+        cv::Mat difference;
+        cv::absdiff(srcImage, _searchImage, difference);
+        dstImage = cv::Mat::zeros(difference.rows, difference.cols, CV_8UC3);
+        tools::combineImages(srcImage, difference, _replacingImage, _treshold, dstImage);
+    }
+    else {
+        dstImage = srcImage;
+    }
 }

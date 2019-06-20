@@ -56,9 +56,7 @@ private:
     const cv::Mat * _slideImage = nullptr;
 
     void loadImages(const path & basePath, const std::string & imgPrefix, const std::string & extension, std::vector<cv::Mat> & result);
-    double imageSimilarity(const cv::Mat & img1, const cv::Mat & img2);
     size_t closestImageIndex(const cv::Mat & source, std::vector<cv::Mat> & images, size_t lastIndex);
-    void combineTranslatedVideo(const cv::Mat & videoFrame, const cv::Mat & difference, const cv::Mat & translatedImage, float threshold, cv::Mat & imgResult);
 };
 
 #endif
