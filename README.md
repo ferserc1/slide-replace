@@ -19,7 +19,7 @@ Video Slide Merger depends on OpenCV. You also need CMake to generate the projec
 Install OpenCV dependencies from sources or using a package manager (line apt-get). Build using CMake and make:
 
 ```
-cd video-slide-merger
+cd slide-replace
 mkdir build
 cd build
 cmake ..
@@ -33,7 +33,7 @@ Install OpenCV dependencies from sources, binaries or using homebrew.
 You can build the project using make. You can also use Xcode to build and debug the project:
 
 ```
-cd video-slide-merger
+cd slide-replace
 mkdir build
 cd build
 cmake .. -G Xcode
