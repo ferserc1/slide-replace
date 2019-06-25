@@ -37,7 +37,7 @@ cd slide-replace
 mkdir build
 cd build
 cmake .. -G Xcode
-open merge-pointer.xcodeproj
+open slide-replace.xcodeproj
 ```
 
 ### Windows
