@@ -33,10 +33,10 @@ slide-replace [params] -p=slideReplace input
 
 This processor has 4 optional params
 
--?,-h, --help,--usage: a flag to show the processor help
--s, --searchImage: the image that we want to find and replace in the slidecast
--r, --replacingImage: the new image that we will use as substitute
--t, --treshold: a numeric treshold that will define how much the searched image should resemble the image found in the video (default value 200)
+-?,-h, --help,--usage: a flag to show the processor help\
+-s, --searchImage: the image that we want to find and replace in the slidecast\
+-r, --replacingImage: the new image that we will use as substitute\
+-t, --treshold: a numeric treshold that will define how much the searched image should resemble the image found in the video (default value 200)\
 
 so a tipical call would look like this 
 
@@ -60,14 +60,13 @@ slide-replace [params] -p=slideMerger input
 This processor has 7  optional params
 
 
--?,-h, --help,--usage: a flag to show the processor help
---ext, --imageExtension: the expected extension of the slide images (default value jpg)
--i, --startindex: the defalt starting index of the images [frame_0.jpg frame_1.jpg....] by default 0 but in case the set of images is generated with a tool that starts with 1 we can change it here.
--op, --originalImagePath: in case the original set of images is in a different location than the input video we can set it here, if left blank we will use the input path
---opre, --originalPrefix: in the example the images are called frame_0 frame_1 in this case the prefix is the part of the name that precedes the index (by default frame_)
---rp, --replacingImagePath: like the original set of images we can change the location of the new images and like the original images if this parameter is left blank we will search them in the same path as the video
---rpre, --replacingPrefix: like the original set of images we can change the expected image prefix by default frame_alt_
-
+-?,-h, --help,--usage: a flag to show the processor help\
+--ext, --imageExtension: the expected extension of the slide images (default value jpg)\
+-i, --startindex: the defalt starting index of the images [frame_0.jpg frame_1.jpg....] by default 0 but in case the set of images is generated with a tool that starts with 1 we can change it here.\
+-op, --originalImagePath: in case the original set of images is in a different location than the input video we can set it here, if left blank we will use the input path\
+--opre, --originalPrefix: in the example the images are called frame_0 frame_1 in this case the prefix is the part of the name that precedes the index (by default frame_)\
+--rp, --replacingImagePath: like the original set of images we can change the location of the new images and like the original images if this parameter is left blank we will search them in the same path as the video\
+--rpre, --replacingPrefix: like the original set of images we can change the expected image prefix by default frame_alt_\
 
 
 ## Dependencies
