@@ -66,7 +66,7 @@ This processor has 7  optional params
 -op, --originalImagePath: in case the original set of images is in a different location than the input video we can set it here, if left blank we will use the input path\
 --opre, --originalPrefix: in the example the images are called frame_0 frame_1 in this case the prefix is the part of the name that precedes the index (by default frame_)\
 --rp, --replacingImagePath: like the original set of images we can change the location of the new images and like the original images if this parameter is left blank we will search them in the same path as the video\
---rpre, --replacingPrefix: like the original set of images we can change the expected image prefix by default frame_alt_\
+--rpre, --replacingPrefix: like the original set of images we can change the expected image prefix by default frame_alt_
 
 
 ## Dependencies
