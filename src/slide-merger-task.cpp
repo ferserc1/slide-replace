@@ -48,12 +48,12 @@ void SlideMergerTask::setCommandLine(int argc, const char ** argv) {
     loadResources();
 }
 
-void SlideMergerTask::setup(const std::vector<cv::Mat> & inputFrames) {
+void SlideMergerTask::setup(const std::vector<cv::Mat> & inputFrames, uint32_t passIndex) {
     //std::cout << "Setup test" << std::endl;
     _slideImage = &inputFrames[0];
 }
 
-void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame, std::mutex & mutex) {
+void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame, std::mutex & mutex, uint32_t passIndex) {
     uint32_t currentImage = closestImageIndex(inputFrame, _originalImages, _currentImage);
     if (currentImage!=_currentImage) {
         _slideImage = &inputFrame;

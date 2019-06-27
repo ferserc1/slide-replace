@@ -13,7 +13,9 @@
 
 class SlideReplaceTask : public Task {
 public:
-    void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex);
+    void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex, uint32_t passIndex);
+    
+    int32_t numberOfPasses() { return 2; }
     
     inline void setCommandLine(int argc, char ** argv) { setCommandLine(argc, const_cast<const char **>(argv)); }
     void setCommandLine(int argc, const char ** argv);

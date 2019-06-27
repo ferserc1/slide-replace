@@ -14,10 +14,10 @@ class SlideMergerTask : public Task {
 public:
     
     // Setup function
-    void setup(const std::vector<cv::Mat> &);
+    void setup(const std::vector<cv::Mat> &, uint32_t passIndex);
     
     // Main task function
-    void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex);
+    void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex, uint32_t passIndex);
 
     inline void setCommandLine(int argc, char ** argv) { setCommandLine(argc, const_cast<const char **>(argv)); }
     void setCommandLine(int argc, const char ** argv);

@@ -22,20 +22,14 @@ int main(int argc, char ** argv) {
         return 0;
     }
     std::cout << parser.get<cv::String>(0) << std::endl << processor << std::endl;
-    
+
     path inputVideoPath = inputVideo;
     path outVideoPath = "";
     if (parser.has("output")) {
         outVideoPath = parser.get<cv::String>("output");
     }
     
-    cv::VideoCapture cap(inputVideoPath.toString());
-    cv::VideoWriter outputVideo;
-    cv::Size size(static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH)), static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
-    int ex = static_cast<int>(cap.get(cv::CAP_PROP_FOURCC));
-    outputVideo.open(outVideoPath.toString(), ex, cap.get(cv::CAP_PROP_FPS), size, true);
-
-    Worker w(cap,outputVideo);
+    Worker w(inputVideoPath,outVideoPath);
     
     try {
         std::unique_ptr<Task> task(TaskFactory::Instantiate(processor,inputVideoPath.toString(),outVideoPath.toString()));

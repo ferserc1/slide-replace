@@ -17,8 +17,9 @@ public:
     inline const path & videoOut() const { return _videoOut; }
     
     virtual void setCommandLine(int argc,const char ** argv) {}
-    virtual void setup(const std::vector<cv::Mat> &) {}
-    virtual void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex) {};
+    virtual void setup(const std::vector<cv::Mat> &, uint32_t passIndex) {}
+    virtual void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex, uint32_t passIndex) {};
+    virtual int32_t numberOfPasses() { return 1; }
 
     virtual ~Task() {}
 
