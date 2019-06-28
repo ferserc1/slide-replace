@@ -9,7 +9,10 @@
 
 #include <path.hpp>
 
+class Worker;
+
 class Task {
+    friend class Worker;
 public:
 
     inline virtual void setupPaths(const std::string & videoIn, const std::string & videoOut) { _videoIn = videoIn; _videoOut = videoOut; }
@@ -23,9 +26,13 @@ public:
 
     virtual ~Task() {}
 
+    const Worker * worker() const { return _worker; }
+
 protected:
     path _videoIn;
     path _videoOut;
+    
+    const Worker * _worker = nullptr;
 };
 
 class TaskFactory {

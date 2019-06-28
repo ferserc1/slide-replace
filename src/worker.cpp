@@ -6,6 +6,21 @@
 #include <thread>
 
 
+void Worker::VideoData::setVideoData(const cv::VideoCapture &cap) {
+    if (cap.isOpened()) {
+        _fps = cap.get(cv::CAP_PROP_FPS);
+        _frameCount = cap.get(cv::CAP_PROP_FRAME_COUNT);
+        _width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
+        _height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+    }
+    else {
+        _fps = 0;
+        _frameCount = 0;
+        _width = 0;
+        _height = 0;
+    }
+}
+
 Worker::Worker(const path & src, const path & dst, int threads)
     :_src(src)
     ,_dst(dst)
@@ -13,7 +28,7 @@ Worker::Worker(const path & src, const path & dst, int threads)
 {
 }
 
-void Worker::run() {
+void Worker::run(int argc, const char ** argv) {
     bool useLambdas = _taskFunction != nullptr;
     bool useTask = _taskInstance != nullptr && !useLambdas;
     
@@ -28,6 +43,10 @@ void Worker::run() {
     
     if (!_writer.isOpened()) {
         throw new std::ios_base::failure("The video writer is not ready");
+    }
+    
+    if (_taskInstance) {
+        _taskInstance->setCommandLine(argc, argv);
     }
     
     for (uint32_t currentPass = 0; currentPass < _taskInstance->numberOfPasses(); ++currentPass) {
@@ -114,11 +133,18 @@ void Worker::openVideos() {
     }
     
     _capture.open(_src.toString());
+    if (!_capture.isOpened()) {
+        throw std::ios::failure("Error opening source video.");
+    }
+    videoData.setVideoData(_capture);
     cv::Size size(
         static_cast<int>(_capture.get(cv::CAP_PROP_FRAME_WIDTH)),
         static_cast<int>(_capture.get(cv::CAP_PROP_FRAME_HEIGHT))
     );
     int ex = static_cast<int>(_capture.get(cv::CAP_PROP_FOURCC));
     _writer.open(_dst.toString(), ex, _capture.get(cv::CAP_PROP_FPS), size, true);
+    if (!_writer.isOpened()) {
+        throw std::ios::failure("Error opening destination video.");
+    }
 }
 

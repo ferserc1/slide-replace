@@ -1,6 +1,7 @@
 
 #include <slide-replace-task.hpp>
 #include <tools.hpp>
+#include <worker.hpp>
 
 TaskRegistrar<SlideReplaceTask> slideReplaceFactory("slideReplace");
 
@@ -41,6 +42,11 @@ void SlideReplaceTask::setCommandLine(int argc, const char **argv) {
     if (parser.has("treshold")) {
         _treshold = parser.get<int>("treshold");
     }
+    
+    std::cout << "Frames per second: " << worker()->videoData.fps() <<
+    ", total frames: " << worker()->videoData.frameCount() <<
+    ", frame width: " << worker()->videoData.width() <<
+    ", frame height: " << worker()->videoData.height() << std::endl;
 }
 
 void SlideReplaceTask::execute(const cv::Mat & srcImage, cv::Mat & dstImage, uint32_t frameIndex, std::mutex &mutex, uint32_t passIndex) {

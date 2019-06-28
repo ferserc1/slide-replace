@@ -33,12 +33,9 @@ int main(int argc, char ** argv) {
     
     try {
         std::unique_ptr<Task> task(TaskFactory::Instantiate(processor,inputVideoPath.toString(),outVideoPath.toString()));
-        
-        task->setCommandLine(argc, const_cast<const char**>(argv));
-        
         w.setTask(task.get());
         
-        w.run();
+        w.run(argc, argv);
     }
     catch (std::exception & e) {
         std::cerr << e.what() << std::endl;
