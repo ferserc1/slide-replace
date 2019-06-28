@@ -13,7 +13,7 @@
 
 class SlideReplaceTask : public Task {
 public:
-    void execute(const cv::Mat &, cv::Mat &, std::mutex & mutex, uint32_t passIndex);
+    void execute(const cv::Mat &, cv::Mat &, uint32_t frameIndex, std::mutex & mutex, uint32_t passIndex);
     
     int32_t numberOfPasses() { return 1; }
     

@@ -43,7 +43,7 @@ void SlideReplaceTask::setCommandLine(int argc, const char **argv) {
     }
 }
 
-void SlideReplaceTask::execute(const cv::Mat & srcImage, cv::Mat & dstImage, std::mutex &mutex, uint32_t passIndex) {
+void SlideReplaceTask::execute(const cv::Mat & srcImage, cv::Mat & dstImage, uint32_t frameIndex, std::mutex &mutex, uint32_t passIndex) {
     auto similarity = tools::imageSimilarity(srcImage, _searchImage);
     
     if (similarity<=_treshold) {

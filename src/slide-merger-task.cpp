@@ -53,7 +53,7 @@ void SlideMergerTask::setup(const std::vector<cv::Mat> & inputFrames, uint32_t p
     _slideImage = &inputFrames[0];
 }
 
-void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame, std::mutex & mutex, uint32_t passIndex) {
+void SlideMergerTask::execute(const cv::Mat & inputFrame, cv::Mat & outputFrame, uint32_t frameIndex, std::mutex & mutex, uint32_t passIndex) {
     uint32_t currentImage = closestImageIndex(inputFrame, _originalImages, _currentImage);
     if (currentImage!=_currentImage) {
         _slideImage = &inputFrame;
