@@ -38,9 +38,9 @@ void TimedSlideReplaceTask::setCommandLine(int argc, const char **argv) {
     }
 
     //_let user set threshold?
-    _treshold = 200.0f;
-    /*if (parser.has("treshold")) {
-        _treshold = parser.get<int>("treshold");
+    _threshold = 200.0f;
+    /*if (parser.has("threshold")) {
+        _threshold = parser.get<int>("threshold");
     }*/
 }
 
@@ -58,11 +58,11 @@ void TimedSlideReplaceTask::execute(const cv::Mat & srcImage, cv::Mat & dstImage
     {        
         auto similarity = tools::imageSimilarity(srcImage, _searchImage);
         
-        if (similarity<=_treshold) {            
+        if (similarity<=_threshold) {            
             cv::Mat difference;
             cv::absdiff(srcImage, _searchImage, difference);            
             dstImage = cv::Mat::zeros(difference.rows, difference.cols, CV_8UC3);            
-            tools::combineImages(srcImage, difference, _replacingImage, _treshold, dstImage);            
+            tools::combineImages(srcImage, difference, _replacingImage, _threshold, dstImage);            
         }
         else {            
             dstImage = srcImage;            
