@@ -40,7 +40,7 @@ void SlideReplaceTask::setCommandLine(int argc, const char **argv) {
     
     _treshold = 200.0f;
     if (parser.has("treshold")) {
-        _treshold = parser.get<int>("treshold");
+        _treshold = parser.get<float>("treshold");
     }
     
     std::cout << "Frames per second: " << worker()->videoData.fps() <<

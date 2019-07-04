@@ -8,10 +8,10 @@
 
 void Worker::VideoData::setVideoData(const cv::VideoCapture &cap) {
     if (cap.isOpened()) {
-        _fps = cap.get(cv::CAP_PROP_FPS);
-        _frameCount = cap.get(cv::CAP_PROP_FRAME_COUNT);
-        _width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
-        _height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+        _fps = static_cast<uint32_t>(cap.get(cv::CAP_PROP_FPS));
+        _frameCount = static_cast<uint32_t>(cap.get(cv::CAP_PROP_FRAME_COUNT));
+        _width = static_cast<uint32_t>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
+        _height = static_cast<uint32_t>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
     }
     else {
         _fps = 0;
@@ -49,7 +49,7 @@ void Worker::run(int argc, const char ** argv) {
         _taskInstance->setCommandLine(argc, argv);
     }
     
-    for (uint32_t currentPass = 0; currentPass < _taskInstance->numberOfPasses(); ++currentPass) {
+    for (int currentPass = 0; currentPass < _taskInstance->numberOfPasses(); ++currentPass) {
         std::cout << "Starting pass " << (currentPass + 1) << " of " << _taskInstance->numberOfPasses() << std::endl;
 
         std::vector<cv::Mat> frames;

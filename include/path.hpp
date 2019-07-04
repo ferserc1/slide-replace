@@ -3,6 +3,7 @@
 #define _path_HPP_
 
 #include <string>
+#include <algorithm>
 
 class path {
 public:
