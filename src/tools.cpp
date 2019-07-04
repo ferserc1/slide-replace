@@ -32,7 +32,7 @@ void combineImages(const cv::Mat & videoFrame, const cv::Mat & difference, const
         for (int i = 0; i<videoFrame.cols; ++i) {
             cv::Vec3b pix = difference.at<cv::Vec3b>(j,i);
             
-            dist = sqrtf(pix[0] * pix[0] + pix[2] * pix[1] + pix[2] * pix[2]);
+            dist = sqrtf(static_cast<float>(pix[0] * pix[0] + pix[2] * pix[1] + pix[2] * pix[2]));
             if (dist>threshold) {
                 imgResult.at<cv::Vec3b>(j,i) = videoFrame.at<cv::Vec3b>(j,i);
             }

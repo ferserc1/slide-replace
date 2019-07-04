@@ -24,7 +24,7 @@ void TimedSlideReplaceTask::setCommandLine(int argc, const char **argv) {
         throw std::invalid_argument("replacingImage parameter is required");
     }
     
-    _timestamp = parser.get<int>("timestamp");
+    _timestamp = parser.get<float>("timestamp");
     std::string replacingImagePath = parser.get<cv::String>("replacingImage");
     
     _replacingImage = cv::imread(replacingImagePath, cv::IMREAD_COLOR);
@@ -32,7 +32,7 @@ void TimedSlideReplaceTask::setCommandLine(int argc, const char **argv) {
         throw std::ios_base::failure("No such image with name " + replacingImagePath);
     }
     
-    _expectedframe = _timestamp * worker()->videoData.fps();
+    _expectedframe = static_cast<uint32_t>(_timestamp * static_cast<float>(worker()->videoData.fps()));
     if (_expectedframe>worker()->videoData.frameCount()){
         throw std::ios_base::failure("Please select a time not greater than the video length");
     }

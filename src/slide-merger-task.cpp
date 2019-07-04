@@ -114,7 +114,7 @@ size_t SlideMergerTask::closestImageIndex(const cv::Mat & source, std::vector<cv
     cv::Mat * imR = indexR>=0 && indexR<images.size() ? &images[indexR] : nullptr;
     double similarityL = std::numeric_limits<double>::max();
     double similarityR = similarityL;
-    double similarityC = similarityC;
+    double similarityC = similarityL;
     
     if (imL) {
         similarityL = tools::imageSimilarity(source, *imL);

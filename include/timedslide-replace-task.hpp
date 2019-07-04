@@ -24,7 +24,7 @@ private:
     cv::Mat _replacingImage;
     float _timestamp;
     float _treshold;
-    int _expectedframe;
+    uint32_t _expectedframe;
 };
 
 #endif
