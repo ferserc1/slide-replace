@@ -44,6 +44,26 @@ so a tipical call would look like this
 slide-replace -s=original.png -r=new.png -p=slideReplace video-input.mp4
 ```
 
+#### timedSlideReplace
+
+Our team thought that another way to select the slide that we wanted to replace is using a timestamp where this slide is used. 
+The procesor uses the image at the timestamp in the original input.mp4 and uses that as reference afterward search that image in the entire video and replaces it with the replacing image.
+
+```
+slide-replace [params] -p timedSlideReplace
+```
+
+This procesor has 2 params
+
+-t, --timestamp: the moment where appears the slide that we want to replace (in seconds)\
+-r, --replacingImage: the new image that we will use as substitute
+
+so a tipical call would look like this
+
+```
+slide-replace -t=20 -r=new.png video-input.mp4
+```
+
 #### slideMerger
 
 This is a reimplementation of https://github.com/polimediaupv/video-slide-merger and as the original project replaces the frames of a Power Point presentation video with an alternative version, specified by a sequence of images. It also combine the pointer cursor with the new images.
@@ -54,7 +74,7 @@ A sequence of images, corresponding to the ones in the original video, named as 
 A sequence with the alternative images that will be used as replacement, named as frame_alt_0.jpg, frame_alt_1.jpg... frame_alt_n.jpg
 
 ```
-slide-replace [params] -p=slideMerger input
+slide-replace [params] -p=slideMerger input.mp4
 ```
 
 This processor has 7  optional params
