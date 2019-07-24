@@ -109,12 +109,11 @@ void Worker::run(int argc, const char ** argv) {
                 }, i));
             }
 
-			curFrame += _numberOfThreads;
-            
-            
             for (auto & w : workers) {
                 w.join();
             }
+
+			curFrame += _numberOfThreads;
             
             // Write output
             for (auto i = 0; i<frames.size(); ++i) {

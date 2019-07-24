@@ -51,7 +51,7 @@ void TimedSlideReplaceTask::execute(const cv::Mat & srcImage, cv::Mat & dstImage
             std::cout << "Image Found" << std::endl;
         }
     }
-    else {   
+    else {
         auto similarity = tools::imageSimilarity(srcImage, _searchImage);
 		
         if (similarity <= _treshold) {
