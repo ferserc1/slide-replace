@@ -8,8 +8,9 @@ TaskRegistrar<TimedSlideReplaceTask> timedSlideReplaceFactory("timedSlideReplace
 void TimedSlideReplaceTask::setCommandLine(int argc, const char **argv) {
     const cv::String keys =
     "{help h                   |                      | show this message                                   }"
-    "{timestamp t            |                      | moment that will be used as sample to replace afterwards }"
-    "{replacingImage r         |                      | image that will be replaced in the video             }"    
+    "{timestamp ts             |                      | moment that will be used as sample to replace afterwards }"
+    "{replacingImage r         |                      | image that will be replaced in the video             }"
+	"{threshold t              | 200                  | image similarity threshold                           }"
     ;
     
     cv::CommandLineParser parser(argc,argv,keys);
@@ -37,34 +38,30 @@ void TimedSlideReplaceTask::setCommandLine(int argc, const char **argv) {
         throw std::ios_base::failure("Please select a time not greater than the video length");
     }
 
-    //_let user set threshold?
     _treshold = 200.0f;
-    /*if (parser.has("treshold")) {
-        _treshold = parser.get<int>("treshold");
-    }*/
+    if (parser.has("threshold")) {
+        _treshold = parser.get<float>("threshold");
+    }
 }
 
 void TimedSlideReplaceTask::execute(const cv::Mat & srcImage, cv::Mat & dstImage, uint32_t frameIndex, std::mutex &mutex, uint32_t passIndex) {
-    if (passIndex==0)
-    {
-                
-        if (frameIndex == _expectedframe)
-        {
+    if (passIndex==0) {
+        if (frameIndex == _expectedframe) {
             _searchImage=srcImage;
             std::cout << "Image Found" << std::endl;
         }
     }
-    else
-    {        
+    else {   
         auto similarity = tools::imageSimilarity(srcImage, _searchImage);
-        
-        if (similarity<=_treshold) {            
+		
+        if (similarity <= _treshold) {
             cv::Mat difference;
-            cv::absdiff(srcImage, _searchImage, difference);            
-            dstImage = cv::Mat::zeros(difference.rows, difference.cols, CV_8UC3);            
-            tools::combineImages(srcImage, difference, _replacingImage, _treshold, dstImage);            
+            cv::absdiff(srcImage, _searchImage, difference);
+			
+            dstImage = cv::Mat::zeros(difference.rows, difference.cols, CV_8UC3);
+            tools::combineImages(srcImage, difference, _replacingImage, _treshold, dstImage);    
         }
-        else {            
+        else {
             dstImage = srcImage;            
         }
     }    

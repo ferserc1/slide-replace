@@ -4,6 +4,8 @@
 #include <bw-filter-task.hpp>
 #include <slide-merger-task.hpp>
 
+#include <chrono>
+
 int main(int argc, char ** argv) {
     const cv::String keys =
     "{help h usage ?     |             | print this message                 }"
@@ -19,7 +21,7 @@ int main(int argc, char ** argv) {
     std::string processor = parser.get<cv::String>("processor");
     int jobs = parser.get<int>("jobs");
     
-    if (inputVideo.empty() || (parser.has("help") && !parser.has("processor"))) {
+    if ((inputVideo.empty() || parser.has("help")) && !parser.has("processor")) {
         parser.printMessage();
         
         return 0;
@@ -37,8 +39,8 @@ int main(int argc, char ** argv) {
     try {
         std::unique_ptr<Task> task(TaskFactory::Instantiate(processor,inputVideoPath.toString(),outVideoPath.toString()));
         w.setTask(task.get());
-        
-        w.run(argc, argv);
+       
+		w.run(argc, argv);
     }
     catch (std::exception & e) {
         std::cerr << e.what() << std::endl;

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <chrono>
 
 
 void Worker::VideoData::setVideoData(const cv::VideoCapture &cap) {
@@ -29,9 +30,15 @@ Worker::Worker(const path & src, const path & dst, int threads)
 }
 
 void Worker::run(int argc, const char ** argv) {
+	auto t0 = std::chrono::high_resolution_clock::now();
+
     bool useLambdas = _taskFunction != nullptr;
     bool useTask = _taskInstance != nullptr && !useLambdas;
     
+	if (_taskInstance) {
+		_taskInstance->setCommandLine(argc, argv);
+	}
+
     if (!useLambdas && !useTask) {
         throw new std::invalid_argument("No task function specified");
     }
@@ -43,10 +50,6 @@ void Worker::run(int argc, const char ** argv) {
     
     if (!_writer.isOpened()) {
         throw new std::ios_base::failure("The video writer is not ready");
-    }
-    
-    if (_taskInstance) {
-        _taskInstance->setCommandLine(argc, argv);
     }
     
     for (int currentPass = 0; currentPass < _taskInstance->numberOfPasses(); ++currentPass) {
@@ -83,26 +86,30 @@ void Worker::run(int argc, const char ** argv) {
             
             for (auto i = 0; i<frames.size(); ++i) {
                 workers.push_back(std::thread([&](int index) {
+					mutex.lock();
                     const auto & frame = frames[index];
+					auto thisFrameIndex = curFrame + index;
+					mutex.unlock();
                     cv::Mat newFrame = cv::Mat::zeros(frame.rows, frame.cols, CV_8UC3);
                     
                     if (useLambdas) {
                         _taskFunction(frame,newFrame);
                     }
                     else if (useTask) {
-                        _taskInstance->execute(frame,newFrame,curFrame,mutex,currentPass);
+                        _taskInstance->execute(frame,newFrame,thisFrameIndex,mutex,currentPass);
                     }
                     
-                    {
-                        std::lock_guard<std::mutex> l(mutex);
-                        results[index] = newFrame;
-                        ++curFrame;
-                        if (curFrame%20==0) {
-                            std::cout << "Frame " << curFrame << std::endl;
-                        }
-                    }
+					{
+						std::lock_guard<std::mutex> l(mutex);
+						results[index] = newFrame;
+						if (thisFrameIndex % 20 == 0) {
+							std::cout << "Frame " << thisFrameIndex << std::endl;
+						}
+					}
                 }, i));
             }
+
+			curFrame += _numberOfThreads;
             
             
             for (auto & w : workers) {
@@ -121,6 +128,11 @@ void Worker::run(int argc, const char ** argv) {
             openVideos();
         }
     }
+
+
+	auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now() - t0);
+	std::cout << "Completed in " << diff.count() / 1000 << " seconds" << std::endl;
 }
 
 void Worker::openVideos() {

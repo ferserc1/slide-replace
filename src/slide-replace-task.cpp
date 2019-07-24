@@ -10,7 +10,7 @@ void SlideReplaceTask::setCommandLine(int argc, const char **argv) {
     "{help h                   |                      | show this message                                   }"
     "{searchImage s            |                      | image that will be searched in the video to replace }"
     "{replacingImage r         |                      | mage that will be replaced in the video             }"
-    "{treshold t               |                      | mage that will be replaced in the video             }"
+    "{threshold t              | 200                  | image similarity threshold                           }"
     ;
     
     cv::CommandLineParser parser(argc,argv,keys);
@@ -39,8 +39,8 @@ void SlideReplaceTask::setCommandLine(int argc, const char **argv) {
     }
     
     _treshold = 200.0f;
-    if (parser.has("treshold")) {
-        _treshold = parser.get<float>("treshold");
+    if (parser.has("threshold")) {
+        _treshold = parser.get<float>("threshold");
     }
     
     std::cout << "Frames per second: " << worker()->videoData.fps() <<
