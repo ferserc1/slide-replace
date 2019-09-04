@@ -88,6 +88,9 @@ This processor has 7  optional params
 --rp, --replacingImagePath: like the original set of images we can change the location of the new images and like the original images if this parameter is left blank we will search them in the same path as the video\
 --rpre, --replacingPrefix: like the original set of images we can change the expected image prefix by default frame_alt_
 
+## Encoding and framerate
+
+Right now the tool ask OpenCV to keep the same encoding and framerate as the original video in the resulting video. 
 
 ## Dependencies
 
