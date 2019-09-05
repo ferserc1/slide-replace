@@ -50,7 +50,7 @@ Our team thought that another way to select the slide that we wanted to replace 
 The procesor uses the image at the timestamp in the original input.mp4 and uses that as reference afterward search that image in the entire video and replaces it with the replacing image.
 
 ```
-slide-replace [params] -p timedSlideReplace
+slide-replace [params] -p=timedSlideReplace
 ```
 
 This procesor has 2 params
@@ -61,7 +61,7 @@ This procesor has 2 params
 so a tipical call would look like this
 
 ```
-slide-replace -t=20 -r=new.png video-input.mp4
+slide-replace -t=20 -r=new.png -p=timedSlideReplace video-input.mp4
 ```
 
 #### slideMerger
