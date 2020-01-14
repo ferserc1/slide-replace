@@ -34,10 +34,6 @@ void Worker::run(int argc, const char ** argv) {
 
     bool useLambdas = _taskFunction != nullptr;
     bool useTask = _taskInstance != nullptr && !useLambdas;
-    
-	if (_taskInstance) {
-		_taskInstance->setCommandLine(argc, argv);
-	}
 
     if (!useLambdas && !useTask) {
         throw new std::invalid_argument("No task function specified");
@@ -50,6 +46,10 @@ void Worker::run(int argc, const char ** argv) {
     
     if (!_writer.isOpened()) {
         throw new std::ios_base::failure("The video writer is not ready");
+    }
+    
+    if (_taskInstance) {
+        _taskInstance->setCommandLine(argc, argv);
     }
     
     for (int currentPass = 0; currentPass < _taskInstance->numberOfPasses(); ++currentPass) {
